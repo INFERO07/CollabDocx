@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Undo2, Trash2 } from "lucide-react";
+import { MoreVertical, Undo2, Trash2, History, Clock, FileText } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface DocumentVersion {
     id: string;
@@ -34,9 +35,11 @@ interface DocumentVersionsProps {
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
-        weekday: 'short',
+        month: 'short',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
     });
 };
 
@@ -55,85 +58,101 @@ const DocumentVersions: React.FC<DocumentVersionsProps> = ({
     const handleDelete = (versionId: string) => {
         onDeleteVersion && onDeleteVersion(versionId);
     };
-    function parseHTMLToText(htmlString : string) {
+
+    function parseHTMLToText(htmlString: string) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlString, "text/html");
         return doc.body.textContent || "";
-      }
+    }
+
     return (
-        <Card className="w-full dark:bg-blue-950 shadow-lg rounded-xl border border-blue-200 dark:border-blue-900 overflow-x-hidden">
-            <CardHeader className="p-4 bg-blue-50 border-b border-blue-200 dark:border-blue-900">
-                <CardTitle className="text-xl font-bold text-blue-800 dark:text-blue-200">
-                    Document Versions
-                </CardTitle>
-                <CardDescription className="text-blue-600 dark:text-blue-400">
-                    Historical snapshots of your document
-                </CardDescription>
+        <Card className="w-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-xl overflow-hidden relative">
+            <div className="absolute inset-0 -z-10">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/30 via-teal-50/20 to-transparent"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-emerald-100/20 to-transparent rounded-full blur-2xl"></div>
+            </div>
+
+            <CardHeader className="p-4 bg-gradient-to-r from-emerald-50/80 to-teal-50/80 backdrop-blur-sm border-b border-emerald-100">
+                <div className="flex items-center gap-2">
+                    <History className="w-6 h-6 text-emerald-600" />
+                    <div>
+                        <CardTitle className="text-xl font-bold bg-gradient-to-r from-emerald-800 to-teal-800 bg-clip-text text-transparent">
+                            Document History
+                        </CardTitle>
+                        <CardDescription className="text-emerald-600">
+                            Version control and snapshots
+                        </CardDescription>
+                    </div>
+                </div>
             </CardHeader>
+
             <CardContent className="p-0">
-                <ScrollArea className="h-72 w-full">
+                <ScrollArea className="h-[400px] w-full">
                     {myRole === 'VIEWER' ? (
-                        <div className="p-4 text-center text-blue-500 dark:text-blue-400">
-                            Viewer mode has no access to versions
+                        <div className="p-6 text-center">
+                            <Badge variant="outline" className="border-emerald-200 text-emerald-600 px-4 py-2">
+                                Viewer mode - Limited access
+                            </Badge>
                         </div>
                     ) : versions.length === 0 ? (
-                        <div className="h-full flex justify-center items-center">
-                            <p className="text-center py-16 text-blue-500 dark:text-blue-400">
-                                No versions saved yet
-                            </p>
+                        <div className="h-full flex flex-col justify-center items-center p-6 text-emerald-600">
+                            <FileText className="w-12 h-12 mb-2 text-emerald-400" />
+                            <p className="text-center">No versions saved yet</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-blue-200 dark:divide-blue-900">
+                        <div className="divide-y divide-emerald-100">
                             {versions.map((version, index) => (
                                 <div 
                                     key={version.id} 
-                                    className="p-4 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors flex items-start space-x-4 "
+                                    className="p-4 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-teal-50/50 transition-all duration-300"
                                 >
-                                    <div className="flex-grow min-w-0">
-                                        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-1">
-                                            <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200 truncate">
-                                                {version.name || `Version ${index + 1}`}
-                                            </h3>
-                                            <div className='flex items-center justify-center gap-1'>
-                                                <span className="text-xs text-blue-500 dark:text-blue-400">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="flex-grow min-w-0">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Clock className="w-4 h-4 text-emerald-500" />
+                                                <span className="text-sm text-emerald-600">
                                                     {formatDate(version.createdAt)}
                                                 </span>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button 
-                                                            variant="ghost" 
-                                                            size="sm" 
-                                                            className="h-8 w-8 p-0 text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-800"
-                                                        >
-                                                            <MoreVertical className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-48">
-                                                        <DropdownMenuItem 
-                                                            className="cursor-pointer"
-                                                            onSelect={() => handleRollback(version.id)}
-                                                        >
-                                                            <Undo2 className="mr-2 h-4 w-4" />
-                                                            Rollback
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem 
-                                                            className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
-                                                            onSelect={() => handleDelete(version.id)}
-                                                        >
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            Delete version
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                            </div>
+                                            <h3 className="text-lg font-semibold text-emerald-800 mb-1">
+                                                {version.name || `Version ${versions.length - index}`}
+                                            </h3>
+                                            <div className="bg-emerald-50/50 rounded-lg p-3 mt-2">
+                                                <pre className="text-sm text-emerald-700 line-clamp-2 font-mono">
+                                                    {version.content.length === 0 
+                                                        ? "No content" 
+                                                        : parseHTMLToText(version.content).slice(0, 100) + '...'}
+                                                </pre>
                                             </div>
                                         </div>
-                                        <p className="text-xs text-blue-500 dark:text-blue-400 truncate mb-2">
-                                            {version.id}
-                                        </p>
-                                        
-                                        <pre className="text-xs text-blue-700 dark:text-blue-300 line-clamp-2 overflow-hidden">
-                                            {version.content.length === 0 ? "No content" : parseHTMLToText(version.content).slice(0, 100) + '...'}
-                                        </pre>
+
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="sm" 
+                                                    className="h-8 w-8 p-0 hover:bg-emerald-100/50"
+                                                >
+                                                    <MoreVertical className="h-4 w-4 text-emerald-600" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-48 bg-white/90 backdrop-blur-sm border-emerald-100">
+                                                <DropdownMenuItem 
+                                                    className="cursor-pointer hover:bg-emerald-50"
+                                                    onSelect={() => handleRollback(version.id)}
+                                                >
+                                                    <Undo2 className="mr-2 h-4 w-4 text-emerald-600" />
+                                                    <span className="text-emerald-700">Rollback</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem 
+                                                    className="cursor-pointer text-red-600 hover:bg-red-50"
+                                                    onSelect={() => handleDelete(version.id)}
+                                                >
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    Delete version
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
                                 </div>
                             ))}

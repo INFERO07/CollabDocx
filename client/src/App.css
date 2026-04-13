@@ -1,0 +1,26 @@
+.App {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+li {
+  list-style: none;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+li.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+button {
+  margin-left: auto;
+}

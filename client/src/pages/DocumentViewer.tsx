@@ -127,19 +127,17 @@ export const SaveVersionComponent = React.memo(
     myRole: string;
     openVersionDialog: () => void;
   }) => {
-    console.log("SaveVersionComponent rendered"); // Keep for debugging
     return (
       <Button
         disabled={versionLoading || myRole === "VIEWER"}
-        className="bg-blue-600 text-white hover:bg-blue-700"
+        className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-lg hover:shadow-xl"
         onClick={openVersionDialog}
       >
-        <History />
+        <History className="mr-2" />
         Save Version
       </Button>
     );
   },
-  // Custom comparison function to prevent unnecessary re-renders
   (prevProps, nextProps) => {
     return (
       prevProps.versionLoading === nextProps.versionLoading &&
@@ -147,6 +145,7 @@ export const SaveVersionComponent = React.memo(
     );
   }
 );
+
 export const ShareLinkButton = React.memo(
   ({
     myRole,
@@ -157,33 +156,32 @@ export const ShareLinkButton = React.memo(
     shareLinkLoading: boolean;
     generateShareLink: (access: string) => void;
   }) => {
-    console.log("ShareLinkButton rendered"); // Keep for debugging
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
-            className="text-blue-700 border-blue-300 hover:bg-blue-50"
+            className="border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50"
             disabled={shareLinkLoading || myRole === "VIEWER"}
           >
             {shareLinkLoading ? (
               <Loader2 className="mr-2 animate-spin" />
             ) : (
-              <Share2 className="mr-2 h-4 w-4 text-blue-600" />
+              <Share2 className="mr-2 h-4 w-4 text-emerald-600" />
             )}
             Share Link
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="bg-white/90 backdrop-blur-sm border-emerald-100">
           <DropdownMenuItem
             onClick={() => generateShareLink("VIEWER")}
-            className="cursor-pointer"
+            className="cursor-pointer hover:bg-emerald-50"
           >
             Share as Viewer
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => generateShareLink("EDITOR")}
-            className="cursor-pointer"
+            className="cursor-pointer hover:bg-emerald-50"
           >
             Share as Editor
           </DropdownMenuItem>
@@ -191,7 +189,6 @@ export const ShareLinkButton = React.memo(
       </DropdownMenu>
     );
   },
-  // Custom comparison function
   (prevProps, nextProps) => {
     return (
       prevProps.myRole === nextProps.myRole &&
@@ -212,29 +209,33 @@ export const CurrentWriterStatus = React.memo(
     myRole: string;
     unsaved: boolean;
   }) => {
-    // Only render if there's an active writer and the document is locked
     if (!currentWriter || !lock) return null;
-    console.log(unsaved);
 
     return (
-      <div className="flex flex-row items-center justify-between px-2">
-        <div className="text-sm text-blue-600 mt-2 flex items-center justify-between">
-          {lock && myRole != "VIEWER" ? (
-            <FileLock2 className="text-red-600" />
-          ) : null}
-          {currentWriter && lock ? (
-            <p className="font-bold px-3">
-              Currently {currentWriter} is editing
-            </p>
-          ) : null}
+      <div className="mt-4 p-3 bg-emerald-50/80 backdrop-blur-sm rounded-lg border border-emerald-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {lock && myRole !== "VIEWER" && (
+              <FileLock2 className="text-emerald-600" />
+            )}
+            {currentWriter && lock && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-emerald-700">
+                  Currently editing: <span className="font-semibold">{currentWriter}</span>
+                </span>
+              </div>
+            )}
+          </div>
+          {unsaved && (
+            <Badge variant="outline" className="border-amber-300 text-amber-600">
+              Unsaved changes
+            </Badge>
+          )}
         </div>
-        {unsaved ? (
-          <p className="text-red-500 font-medium px-3">{"Unsaved changes"}</p>
-        ) : null}
       </div>
     );
   },
-  // Custom comparison function to prevent unnecessary re-renders
   (prevProps, nextProps) => {
     return (
       prevProps.currentWriter === nextProps.currentWriter &&
@@ -870,170 +871,310 @@ function DocumentViewer() {
       );
     }
   };
+  const [showExport, setShowExport] = useState(false);
+  const handleImport = async (e: any) => {
+  try {
+    const file = e.target.files[0];
 
-  // If user is a VIEWER, disable editing
-  const isReadOnly = myRole === "VIEWER";
+    if (!file) return;
 
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("http://localhost:3000/api/import", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    // 👉 IMPORTANT: load into editor
+    setText(data.html);
+
+  } catch (err) {
+    console.error("IMPORT ERROR:", err);
+  }
+};
+const exportPDF = async () => {
+  try {
+    const res = await fetch("http://localhost:3000/api/export/pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+     body: JSON.stringify({ 
+  html: text,
+  title: "My Document" // or dynamic
+})
+    });
+
+    if (!res.ok) {
+      throw new Error("PDF export failed");
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "document.pdf";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("PDF ERROR:", err);
+  }
+};
+const exportDOCX = async () => {
+  try {
+    const res = await fetch("http://localhost:3000/api/export/docx", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ html: text }),
+    });
+
+    if (!res.ok) {
+      throw new Error("DOCX export failed");
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "document.docx";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("DOCX ERROR:", err);
+  }
+};
+useEffect(() => {
+  const handleClick = () => setShowExport(false);
+  window.addEventListener("click", handleClick);
+  return () => window.removeEventListener("click", handleClick);
+}, []);
   if (loading || fetchLoading)
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-12 w-12 animate-spin text-emerald-600" />
+          <p className="text-emerald-800 font-medium">Loading document...</p>
+        </div>
       </div>
     );
-  if (!auth?.user?.id) return <div>Unauthorized</div>;
+
+  if (!auth?.user?.id) return (
+    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg shadow-xl border border-emerald-100">
+        <p className="text-emerald-800 font-medium">Please sign in to access this document</p>
+      </div>
+    </div>
+  );
 
   return (
     <>
       <Navbar />
-      <div className="container max-w-[1500px] mx-auto py-20 min-h-screen">
-        <div className="pt-4 flex justify-between items-center my-2">
-          <h1 className="text-2xl font-bold text-blue-800 flex items-center px-3">
-            <FileText className="mr-2 text-blue-600" />
-            {currDoc?.title}
-          </h1>
-          {myRole === "VIEWER" ? (
-            <Badge className="bg-gray-50 mr-2">
-              <p className="text-red-600 font-semibold flex justify-center items-center gap-2">
-                <Lock size={20} /> READ ONLY
-              </p>
-            </Badge>
-          ) : null}
-        </div>
-        <div className="flex flex-col md:flex-row gap-3 px-3">
-          <div className="mb-4 w-full md:w-8/12">
-            <div className="min-h-[90vh]">
-              <Card className="bg-white h-full shadow-md border-blue-200 overflow-hidden">
-                <CardHeader className="flex text-center md:text-left gap-2 flex-col md:flex-row bg-blue-50 justify-between items-center border-b border-blue-100 pb-4">
-                  <div>
-                    <CardTitle className="text-blue-800">
-                      Document Viewer
-                    </CardTitle>
-                    <CardDescription className="text-blue-600">
-                      Real-time collaborative editing
-                    </CardDescription>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 space-x-2">
-                    <SaveVersionComponent
-                      versionLoading={versionLoading}
-                      openVersionDialog={openVersionDialog}
-                      myRole={myRole}
-                    />
-                    <ShareLinkButton
-                      myRole={myRole}
-                      shareLinkLoading={shareLinkLoading}
-                      generateShareLink={generateShareLink}
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <ReactQuill
-                    theme="snow"
-                    value={text}
-                    onChange={(value, delta, source: any) =>
-                      sendData(value, delta, source)
-                    }
-                    modules={modules}
-                    readOnly={myRole === "VIEWER" || lock}
-                    className={`h-[55vh] ${
-                      isReadOnly || lock ? "cursor-not-allowed opacity-60" : ""
-                    }`}
-                  />
-
-                  <div className="flex flex-row items-center justify-between px-2">
-                    <div className="text-sm text-blue-600 mt-2 flex items-center justify-between">
-                      {lock && myRole != "VIEWER" ? (
-                        <FileLock2 className="text-red-600" />
-                      ) : null}
-                      {currentWriter && lock ? (
-                        <p className="font-bold px-3">
-                          Currently {currentWriter} is editing
-                        </p>
-                      ) : null}
-                    </div>
-                    {unsaved ? (
-                      <p className="text-red-500 font-medium px-3">
-                        {"Unsaved changes"}
-                      </p>
-                    ) : null}
-                  </div>
-                </CardContent>
-                <CardFooter className="mt-8">
-                  {myRole === "VIEWER" ? null : (
-                    <Button
-                      disabled={saveLoading}
-                      className="w-[130px] bg-blue-600 hover:bg-blue-500"
-                      onClick={saveDocument}
-                    >
-                      {saveLoading ? (
-                        <p className="flex items-center gap-2">
-                          <Loader2 className="animate-spin" /> Saving..
-                        </p>
-                      ) : (
-                        "Save Document"
-                      )}
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
-              <GeminiChatbox
-                apiKey={apiURL}
-                model="gemini-2.0-flash" // You can change to other Gemini models
-                title="Gemini Assistant"
-                placeholder="Ask anything..."
-                temperature={0.7}
-                maxTokens={2048}
-              />
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50/50 to-cyan-50/50 py-16">
+        <div className="container max-w-[1500px] mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-emerald-100/50 rounded-full">
+                <FileText className="w-8 h-8 text-emerald-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-800 to-teal-800 bg-clip-text text-transparent">
+                  {currDoc?.title}
+                </h1>
+                <p className="text-emerald-600 mt-1">
+                  {myRole === "VIEWER" ? "Read-only mode" : "Collaborative editing mode"}
+                </p>
+              </div>
             </div>
+            {myRole === "VIEWER" && (
+              <Badge className="bg-emerald-50 border-2 border-emerald-200">
+                <Lock className="w-4 h-4 mr-1 text-emerald-600" />
+                <span className="text-emerald-700 font-medium">Read Only</span>
+              </Badge>
+            )}
           </div>
 
-          <div className="w-full md:w-4/12 flex flex-col gap-3">
-            <ChatBox onSendMessage={sendChat} initialMessages={chatMessages} />
-            <CurrentUsers
-              currentUsers={currentUsers}
-              currDoc={currDoc}
-              auth={auth}
-              openShareDialog={openShareDialog}
-            />
-            <DocumentVersions
-              versions={versions}
-              myRole={myRole}
-              setRollbackVersionId={setRollbackVersionId}
-              setRollbackConfirmDialogOpen={setRollbackConfirmDialogOpen}
-              onDeleteVersion={deleteVersion}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8">
+              <div className="space-y-6">
+                <Card className="bg-white/80 backdrop-blur-sm border-emerald-100 shadow-xl overflow-hidden">
+                  <CardHeader className="flex flex-col md:flex-row justify-between items-center border-b border-emerald-100 pb-4 bg-gradient-to-r from-emerald-50/80 to-teal-50/80">
+                    <div>
+                      <CardTitle className="text-2xl font-bold bg-gradient-to-r from-emerald-800 to-teal-800 bg-clip-text text-transparent">
+                        Document Editor
+                      </CardTitle>
+                      <CardDescription className="text-emerald-600">
+                        Real-time collaborative editing
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center gap-3 mt-4 md:mt-0">
+                      <SaveVersionComponent
+                        versionLoading={versionLoading}
+                        myRole={myRole}
+                        openVersionDialog={openVersionDialog}
+                      />
+                      <ShareLinkButton
+                        myRole={myRole}
+                        shareLinkLoading={shareLinkLoading}
+                        generateShareLink={generateShareLink}
+                      />
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-6">
+                    <div className="rounded-lg overflow-hidden border-2 border-emerald-100 shadow-inner">
+                      <ReactQuill
+                        theme="snow"
+                        value={text}
+                        onChange={(value, delta, source) => sendData(value, delta, source)}
+                        modules={modules}
+                        readOnly={myRole === "VIEWER" || lock}
+                        className={`h-[55vh] bg-white ${
+                          myRole === "VIEWER" || lock ? "cursor-not-allowed opacity-80" : ""
+                        }`}
+                      />
+                    </div>
+
+                    <CurrentWriterStatus
+                      currentWriter={currentWriter}
+                      lock={lock}
+                      myRole={myRole}
+                      unsaved={unsaved}
+                    />
+                  </CardContent>
+
+                  <CardFooter className="p-6 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 border-t border-emerald-100 flex justify-between items-center">
+  
+  {/* LEFT: SAVE BUTTON */}
+  {myRole !== "VIEWER" && (
+    <Button
+      disabled={saveLoading}
+      className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+      onClick={saveDocument}
+    >
+      {saveLoading ? (
+        <p className="flex items-center gap-2">
+          <Loader2 className="animate-spin" /> Saving...
+        </p>
+      ) : (
+        "Save Document"
+      )}
+    </Button>
+  )}
+
+  {/* RIGHT: IMPORT + EXPORT */}
+  <div className="flex items-center gap-3">
+
+    {/* IMPORT */}
+    <label>
+      <input type="file" hidden onChange={handleImport} />
+      <span className="bg-emerald-400 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg cursor-pointer shadow">
+        Import
+      </span>
+    </label>
+
+    {/* EXPORT */}
+    <div className="relative">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowExport(!showExport);
+        }}
+        className="bg-emerald-400 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg shadow"
+      >
+        Export
+      </button>
+
+      {showExport && (
+        <div className="absolute right-0 bottom-12 bg-white border rounded-lg shadow-lg z-50">
+          <button
+            onClick={exportPDF}
+            className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+          >
+            Export as PDF
+          </button>
+
+          <button
+            onClick={exportDOCX}
+            className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+          >
+            Export as Word
+          </button>
+        </div>
+      )}
+    </div>
+
+  </div>
+
+</CardFooter>
+                </Card>
+
+                <div className="bg-white/80 backdrop-blur-sm rounded-lg border border-emerald-100 shadow-xl p-4">
+                  <GeminiChatbox
+                    apiKey={apiURL}
+                    model="gemini-2.0-flash"
+                    title="AI Assistant"
+                    placeholder="Ask anything about your document..."
+                    temperature={0.7}
+                    maxTokens={2048}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-4 space-y-6">
+              <ChatBox onSendMessage={sendChat} initialMessages={chatMessages} />
+              <CurrentUsers
+                currentUsers={currentUsers}
+                currDoc={currDoc}
+                auth={auth}
+                openShareDialog={openShareDialog}
+              />
+              <DocumentVersions
+                versions={versions}
+                myRole={myRole}
+                setRollbackVersionId={setRollbackVersionId}
+                setRollbackConfirmDialogOpen={setRollbackConfirmDialogOpen}
+                onDeleteVersion={deleteVersion}
+              />
+            </div>
           </div>
         </div>
 
         {/* Share Dialog */}
         <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-          <DialogContent className="sm:max-w-[425px] bg-white">
+          <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle className="text-blue-800">
-                Share Document
-              </DialogTitle>
-              <DialogDescription className="text-blue-600">
+              <DialogTitle className="text-emerald-800">Share Document</DialogTitle>
+              <DialogDescription className="text-emerald-600">
                 Choose access level for {selectedUser?.name}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-blue-800">
+                <Label htmlFor="role" className="text-emerald-800">
                   Access Level
                 </Label>
                 <Select
                   value={selectedShareRole}
                   onValueChange={setSelectedShareRole}
                 >
-                  <SelectTrigger className="col-span-3 border-blue-300 focus:ring-blue-300">
+                  <SelectTrigger className="col-span-3 border-emerald-200 focus:ring-emerald-500">
                     <SelectValue placeholder="Select access level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="VIEWER" className="hover:bg-blue-50">
-                      Viewer (Read-only)
-                    </SelectItem>
-                    <SelectItem value="EDITOR" className="hover:bg-blue-50">
-                      Editor (Full Access)
-                    </SelectItem>
+                    <SelectItem value="VIEWER">Viewer (Read-only)</SelectItem>
+                    <SelectItem value="EDITOR">Editor (Full Access)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1041,7 +1182,7 @@ function DocumentViewer() {
             <DialogFooter>
               <Button
                 type="submit"
-                className="bg-blue-600 text-white hover:bg-blue-700"
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600"
                 onClick={shareWithUser}
               >
                 Share
@@ -1052,49 +1193,48 @@ function DocumentViewer() {
 
         {/* Version Save Dialog */}
         <Dialog open={versionDialogOpen} onOpenChange={setVersionDialogOpen}>
-          <DialogContent className="sm:max-w-[425px] bg-white">
+          <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle className="text-blue-800">Save Version</DialogTitle>
-              <DialogDescription className="text-blue-600">
+              <DialogTitle className="text-emerald-800">Save Version</DialogTitle>
+              <DialogDescription className="text-emerald-600">
                 Give a name to this document version
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="versionName" className="text-blue-800">
+                <Label htmlFor="versionName" className="text-emerald-800">
                   Version Name
                 </Label>
                 <Input
                   id="versionName"
                   value={versionName}
                   onChange={(e) => setVersionName(e.target.value)}
-                  placeholder={`Version name`}
-                  className="col-span-3 border-blue-300 focus:ring-blue-300"
-                  autoComplete="off"
+                  placeholder="Version name"
+                  className="col-span-3 border-emerald-200 focus:ring-emerald-500"
                 />
               </div>
             </div>
-            <DialogFooter className="flex flex-row items-center justify-center gap-2">
+            <DialogFooter>
               <Button
                 variant="outline"
-                className="text-blue-700 border-blue-300 hover:bg-blue-50 mr-2"
+                className="border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50"
                 onClick={() => setVersionDialogOpen(false)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="bg-blue-600 text-white hover:bg-blue-700"
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600"
                 onClick={saveVersion}
                 disabled={!versionName.trim()}
               >
                 {versionLoading ? (
                   <p className="flex items-center gap-2">
-                    <Loader2 className="animate-spin" /> Saving..
+                    <Loader2 className="animate-spin" /> Saving...
                   </p>
                 ) : (
-                  <p className="flex items-center gap-1">
-                    <History className="mr-2 h-4 w-4" /> Save Version
+                  <p className="flex items-center gap-2">
+                    <History className="w-4 h-4" /> Save Version
                   </p>
                 )}
               </Button>
@@ -1107,26 +1247,33 @@ function DocumentViewer() {
           open={rollbackConfirmDialogOpen}
           onOpenChange={setRollbackConfirmDialogOpen}
         >
-          <DialogContent className="sm:max-w-[425px] bg-white">
+          <DialogContent className="sm:max-w-[425px] bg-white/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle className="text-blue-800 flex items-center">
-                <AlertCircle className="mr-2 text-yellow-500" />
+              <DialogTitle className="text-emerald-800 flex items-center gap-2">
+                <AlertCircle className="text-amber-500" />
                 Confirm Version Rollback
               </DialogTitle>
-              <DialogDescription className="text-blue-600 py-4">
-                You are about to roll back the document to the version :{" "}
-                <p className="font-semibold text-red-700">
-                  {rollbackVersionId}
-                </p>
-                This action will replace the current content of the document
-                with the content from the chosen version. All unsaved changes in
-                the current document will be lost.
+              <DialogDescription className="text-emerald-600 mt-4">
+                <div className="space-y-4">
+                  <p>
+                    You are about to roll back to version:{" "}
+                    <span className="font-semibold text-amber-600">
+                      {rollbackVersionId}
+                    </span>
+                  </p>
+                  <div className="bg-amber-50/50 border border-amber-200 rounded-lg p-4">
+                    <p className="text-amber-700">
+                      This action will replace the current content. All unsaved changes
+                      will be lost.
+                    </p>
+                  </div>
+                </div>
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <Button
                 variant="outline"
-                className="text-blue-700 border-blue-300 hover:bg-blue-50 mr-2"
+                className="border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50"
                 onClick={() => {
                   setRollbackConfirmDialogOpen(false);
                   setRollbackVersionId(null);
@@ -1135,12 +1282,12 @@ function DocumentViewer() {
                 Cancel
               </Button>
               <Button
-                className="bg-blue-600 text-white hover:bg-blue-700"
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600"
                 onClick={rollbackToVersion}
               >
                 {rollbackLoading ? (
                   <p className="flex items-center gap-2">
-                    <Loader2 className="animate-spin" /> Rolling back..
+                    <Loader2 className="animate-spin" /> Rolling back...
                   </p>
                 ) : (
                   "Roll back"

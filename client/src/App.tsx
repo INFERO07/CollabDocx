@@ -20,7 +20,7 @@ interface ProtectedRouteProps {
 
 // Protected route component
 const ProtectedRoute = ({ children }: ProtectedRouteProps): JSX.Element => {
-  const [auth] = useRecoilState(authAtom);
+  // const [auth] = useRecoilState(authAtom);
   const token = localStorage.getItem('token');
   const location = useLocation();
   
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps): JSX.Element => {
 };
 
 function App(): JSX.Element {
-  const [auth, setAuth] = useRecoilState(authAtom);
+  const [, setAuth] = useRecoilState(authAtom);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const location = useLocation();

@@ -70,20 +70,21 @@ const DocumentCard: React.FC<{
     month: "long",
     day: "numeric",
   });
-  function parseHTMLToText(htmlString : string) {
+
+  function parseHTMLToText(htmlString: string) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, "text/html");
     return doc.body.textContent || "";
   }
-  
+
   const getAccessIcon = () => {
     switch (data.role) {
       case "OWNER":
-        return <Crown className="w-4 h-4 text-blue-500" />;
+        return <Crown className="w-4 h-4 text-emerald-500" />;
       case "EDITOR":
-        return <Edit3 className="w-4 h-4 text-sky-500" />;
+        return <Edit3 className="w-4 h-4 text-teal-500" />;
       default:
-        return <Eye className="w-4 h-4 text-slate-500" />;
+        return <Eye className="w-4 h-4 text-cyan-500" />;
     }
   };
 
@@ -98,25 +99,27 @@ const DocumentCard: React.FC<{
       <Card
         className={`
           cursor-pointer 
-          border-transparent
-          bg-white 
+          border-2
+          border-emerald-100
+          bg-white/80 
+          backdrop-blur-sm
           shadow-lg 
           hover:shadow-xl
           transition-all 
           duration-300 
-          hover:border-blue-500
+          hover:border-emerald-300
           hover:ring-2
-          hover:ring-blue-200
+          hover:ring-emerald-100
           group
           ${viewMode === "list" ? "w-full" : ""}
         `}
       >
-        <CardHeader className="flex flex-row items-center border-b border-slate-100 justify-between space-y-0 pb-3">
+        <CardHeader className="flex flex-row items-center border-b border-emerald-100 justify-between space-y-0 pb-3">
           <div className="flex items-center space-x-3">
-            <File className="h-5 w-5 text-blue-500" />
+            <File className="h-5 w-5 text-emerald-500" />
             <CardTitle 
               onClick={() => onClick(data.id)} 
-              className="hover:underline text-lg font-semibold text-slate-800 group-hover:text-blue-600 transition-colors"
+              className="hover:underline text-lg font-semibold text-emerald-800 group-hover:text-emerald-600 transition-colors"
             >
               {data.title}
             </CardTitle>
@@ -142,7 +145,7 @@ const DocumentCard: React.FC<{
                   <Tooltip>
                     <TooltipTrigger>
                       <Trash
-                        className="w-4 h-4 text-red-500 cursor-pointer"
+                        className="w-4 h-4 text-red-500 cursor-pointer hover:text-red-600"
                         onClick={(e) => {
                           e.stopPropagation();
                           onDelete(data.id);
@@ -157,13 +160,13 @@ const DocumentCard: React.FC<{
           </div>
         </CardHeader>
         <CardContent className="py-3">
-          <p className="text-md text-slate-600 line-clamp-2 truncate opacity-80">
+          <p className="text-md text-emerald-700 line-clamp-2 truncate opacity-80">
             {parseHTMLToText(data.content) || "No content yet"}
           </p>
         </CardContent>
-        <CardFooter className="flex justify-between text-xs text-slate-500">
+        <CardFooter className="flex justify-between text-xs text-emerald-600">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             {data.role}
           </span>
           <span>Updated: {readableDate}</span>
@@ -340,7 +343,7 @@ export default function MyDocs() {
       >
         <div className="flex items-center mb-4 space-x-3">
           {icon}
-          <h2 className="text-2xl font-semibold text-slate-800">{title}</h2>
+          <h2 className="text-2xl font-semibold text-emerald-800">{title}</h2>
         </div>
         <div
           className={`grid ${
@@ -375,7 +378,7 @@ export default function MyDocs() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="min-h-screen pt-16 bg-slate-50 relative"
+        className="min-h-screen pt-16 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 relative"
       >
         <main className="max-w-[1500px] w-11/12 md:w-10/12 mx-auto px-4 py-8 relative z-10">
           {/* Header Section */}
@@ -385,10 +388,10 @@ export default function MyDocs() {
             transition={{ duration: 0.5 }}
             className="mb-8"
           >
-            <h1 className="text-4xl text-center md:text-left font-bold text-slate-900 mb-2">
+            <h1 className="text-4xl text-center md:text-left font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-2">
               My Documents
             </h1>
-            <p className="text-slate-600 text-center md:text-left">
+            <p className="text-emerald-600 text-center md:text-left">
               Manage and access all your documents in one place
             </p>
           </motion.div>
@@ -398,26 +401,27 @@ export default function MyDocs() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/55 border border-slate-300 rounded-xl shadow-sm p-4 mb-6"
+            className="bg-white/80 backdrop-blur-sm border-2 border-emerald-100 rounded-xl shadow-lg p-4 mb-6"
           >
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-400 w-5 h-5" />
                 <Input
                   placeholder="Search documents..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 border-slate-200 focus:border-blue-500"
+                  className="pl-10 border-emerald-200 focus:border-emerald-500 focus:ring-emerald-200"
                 />
               </div>
 
               <div className="flex flex-col md:flex-row items-center space-x-4">
                 <div className="flex items-center justify-evenly gap-3">
-                  <div className="items-center hidden md:block bg-slate-200 rounded-lg p-1">
+                  <div className="items-center hidden md:block bg-emerald-100 rounded-lg p-1">
                     <Button
                       variant={viewMode === "grid" ? "default" : "ghost"}
                       size="icon"
                       onClick={() => setViewMode("grid")}
+                      className={viewMode === "grid" ? "bg-emerald-500 text-white" : "text-emerald-700"}
                     >
                       <Grid className="w-5 h-5" />
                     </Button>
@@ -425,16 +429,16 @@ export default function MyDocs() {
                       variant={viewMode === "list" ? "default" : "ghost"}
                       size="icon"
                       onClick={() => setViewMode("list")}
+                      className={viewMode === "list" ? "bg-emerald-500 text-white" : "text-emerald-700"}
                     >
                       <List className="w-5 h-5" />
                     </Button>
                   </div>
 
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-[180px] border-emerald-200 focus:ring-emerald-200">
                       <SelectValue placeholder="Sort By" />
                     </SelectTrigger>
-                    {/* Previous code continues... */}
                     <SelectContent>
                       <SelectItem value="recent">Recently Modified</SelectItem>
                       <SelectItem value="name">Name</SelectItem>
@@ -449,7 +453,7 @@ export default function MyDocs() {
                   <DialogTrigger asChild>
                     <Button
                       variant="default"
-                      className="bg-gradient-to-r mt-2 md:mt-0 from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700"
+                      className="bg-gradient-to-r mt-2 md:mt-0 from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
                     >
                       <Plus className="w-5 h-5 mr-2" />
                       New Document
@@ -457,25 +461,27 @@ export default function MyDocs() {
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Create New Document</DialogTitle>
+                      <DialogTitle className="text-emerald-800">Create New Document</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <Input
                         placeholder="Enter document title"
                         value={newDocTitle}
                         onChange={(e) => setNewDocTitle(e.target.value)}
+                        className="border-emerald-200 focus:ring-emerald-200"
                       />
                       <div className="flex justify-end space-x-2">
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           onClick={() => setIsCreateDialogOpen(false)}
+                          className="border-2 border-emerald-500 text-emerald-700 hover:bg-emerald-50"
                         >
                           Cancel
                         </Button>
                         <Button
                           onClick={handleCreateDocument}
                           disabled={!newDocTitle.trim() || createLoading}
-                          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700"
+                          className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
                         >
                           {createLoading ? (
                             <div className="flex items-center">
@@ -501,7 +507,7 @@ export default function MyDocs() {
               animate={{ opacity: 1 }}
               className="flex items-center justify-center py-12"
             >
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
             </motion.div>
           ) : (
             <>
@@ -512,33 +518,32 @@ export default function MyDocs() {
                   transition={{ duration: 0.5 }}
                   className="text-center py-12"
                 >
-                  <File className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                  <File className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-emerald-800 mb-2">
                     No documents found
                   </h3>
-                  <p className="text-slate-600">
+                  <p className="text-emerald-600">
                     {searchQuery
                       ? "Try a different search term"
                       : "Create your first document to get started"}
                   </p>
-                  
                 </motion.div>
               ) : (
                 <>
                   {renderDocumentSection(
                     "Owned Documents",
                     documentSections.ownedDocs,
-                    <Crown className="w-6 h-6 text-blue-500" />
+                    <Crown className="w-6 h-6 text-emerald-500" />
                   )}
                   {renderDocumentSection(
                     "Editable Documents",
                     documentSections.editableDocs,
-                    <Edit3 className="w-6 h-6 text-sky-500" />
+                    <Edit3 className="w-6 h-6 text-teal-500" />
                   )}
                   {renderDocumentSection(
                     "Read-Only Documents",
                     documentSections.readOnlyDocs,
-                    <Eye className="w-6 h-6 text-slate-500" />
+                    <Eye className="w-6 h-6 text-cyan-500" />
                   )}
                 </>
               )}

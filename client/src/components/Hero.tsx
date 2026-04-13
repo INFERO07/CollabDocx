@@ -42,7 +42,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="relative min-h-[90vh] w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 text-white">
+    <div className="relative min-h-[90vh] w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
       {/* Floating Background Elements */}
       <motion.div 
         className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden"
@@ -57,8 +57,8 @@ const HeroSection = () => {
         }}
       >
         {/* Blurred Gradient Circles */}
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
 
         {/* Floating Icons */}
         <motion.div 
@@ -66,37 +66,36 @@ const HeroSection = () => {
           variants={floatingVariants}
           animate="float"
         >
-          <PenTool size={64} className="text-indigo-300" />
+          <PenTool size={64} className="text-emerald-400" />
         </motion.div>
         <motion.div 
           className="absolute top-[200px] right-10 opacity-30"
           variants={floatingVariants}
           animate="float"
         >
-          <FileEdit size={64} className="text-purple-300" />
+          <FileEdit size={64} className="text-teal-400" />
         </motion.div>
         <motion.div 
           className="absolute bottom-1/4 left-[200px] opacity-30"
           variants={floatingVariants}
           animate="float"
         >
-          <Waves size={64} className="text-pink-300" />
+          <Waves size={64} className="text-cyan-400" />
         </motion.div>
         <motion.div 
           className="absolute bottom-[40px] left-1/3 opacity-30"
           variants={floatingVariants}
           animate="float"
         >
-          <Delete size={64} className="text-pink-300" />
+          <Delete size={64} className="text-emerald-400" />
         </motion.div>
         <motion.div 
           className="absolute bottom-[100px] right-[300px] opacity-30"
           variants={floatingVariants}
           animate="float"
         >
-          <Send size={64} className="text-pink-300" />
+          <Send size={64} className="text-teal-400" />
         </motion.div>
-        
       </motion.div>
 
       {/* Hero Content */}
@@ -108,57 +107,45 @@ const HeroSection = () => {
       >
         <motion.h1 
           variants={itemVariants}
-          className='text-5xl md:text-6xl font-extrabold mb-6 tracking-tight bg-clip-text text-transparent bg-white'
+          className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600"
         >
           Collaborate Without Limits
         </motion.h1>
 
         <motion.p 
-          className="text-xl md:text-2xl mb-10 max-w-3xl text-gray-300"
+          className="text-xl md:text-2xl mb-10 max-w-3xl text-gray-600"
           variants={itemVariants}
         >
           Seamlessly create, share, and collaborate on documents with powerful version control and intelligent access management.
         </motion.p>
 
         <motion.div 
-          className="flex justify-center space-x-4 mb-16"
-          variants={containerVariants}
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row gap-4 mb-16"
         >
-          <motion.div variants={itemVariants}>
-            {auth.user ? (
-              <Link to={'/myDocs'}>
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-              >
-                Go to Dashboard
+          {!auth.isAuthenticated && (
+            <>
+              <Link to="/signup">
+                <Button size="lg" className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                  Get Started
+                </Button>
+              </Link>
+              <Link to="/signin">
+                <Button size="lg" variant="outline" className="border-2 border-teal-500 text-teal-700 hover:bg-teal-50">
+                  Sign In
+                </Button>
+              </Link>
+            </>
+          )}
+          {auth.isAuthenticated && (
+            <Link to="/mydocs">
+              <Button size="lg" className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+                Go to My Docs
               </Button>
-              </Link>
-            ) : (
-              <Link to={'/signup'}>
-                <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Get Started
-            </Button>
-              </Link>
-            )}
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <Link to={'/about'}>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="border-white/30 text-white bg-white/10 hover:bg-white/20 transition-all duration-300"
-            >
-              Learn More
-            </Button>
             </Link>
-          </motion.div>
+          )}
         </motion.div>
 
-        {/* Feature Highlights */}
         <motion.div 
           className="grid md:grid-cols-3 gap-8 w-full max-w-4xl"
           variants={containerVariants}
@@ -166,32 +153,32 @@ const HeroSection = () => {
           {[
             {
               Icon: FileText,
-              color: "text-indigo-300",
+              color: "text-emerald-500",
               title: "Smart Documents",
               description: "Create rich, collaborative documents with intelligent real-time editing."
             },
             {
               Icon: Users,
-              color: "text-purple-300",
+              color: "text-teal-500",
               title: "Team Collaboration",
               description: "Invite team members with granular, customizable access controls."
             },
             {
               Icon: Clock,
-              color: "text-pink-300",
+              color: "text-cyan-500",
               title: "Version History",
               description: "Comprehensive version tracking with easy rollback and comparison."
             }
           ].map(({ Icon, color, title, description }) => (
             <motion.div 
               key={title}
-              className="bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-md hover:bg-white/10 transition-all duration-300"
+              className="bg-white/80 p-8 rounded-2xl border border-emerald-100 shadow-lg hover:shadow-xl backdrop-blur-sm hover:bg-white/90 transition-all duration-300"
               variants={itemVariants}
               whileHover={{ scale: 1.05 }}
             >
               <Icon className={`mx-auto mb-4 ${color}`} size={48} />
-              <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
-              <p className="text-gray-400">{description}</p>
+              <h3 className="text-xl font-semibold mb-2 text-gray-800">{title}</h3>
+              <p className="text-gray-600">{description}</p>
             </motion.div>
           ))}
         </motion.div>

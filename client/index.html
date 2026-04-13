@@ -1,14 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Collab Desk</title>
+    <title>CleverMind</title>
+    <style>
+      body {
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .game-container {
+        background-color: #fff;
+        border: 2px solid #333; /* Added border */
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+      }
+
+      .game-board {
+        width: 400px;
+        height: 400px;
+        background-color: #eee;
+        position: relative;
+      }
+
+      .snake-part {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: green;
+      }
+
+      .food {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: red;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
-    
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

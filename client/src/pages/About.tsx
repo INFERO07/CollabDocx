@@ -41,17 +41,24 @@ const itemVariants = {
 
 const AboutPage = () => {
   return (
-    <div className="bg-blue-50">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-teal-50/30">
         <Navbar />
         <div className="container mx-auto px-4 pb-16 pt-28 max-w-6xl">
         <motion.header 
-          className="text-center mb-16"
+          className="text-center mb-16 relative"
           initial="hidden"
           animate="visible"
           variants={containerVariants}
         >
+          {/* Decorative background elements */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-emerald-200/20 to-teal-200/20 rounded-full blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-emerald-300/10 to-teal-300/10 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-emerald-300/10 to-teal-300/10 rounded-full blur-2xl"></div>
+          </div>
+
           <motion.h1 
-            className="text-5xl font-bold mb-4 text-blue-900"
+            className="text-6xl font-bold mb-6 bg-gradient-to-r from-emerald-800 to-teal-800 bg-clip-text text-transparent"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -59,7 +66,7 @@ const AboutPage = () => {
             Collab Desk
           </motion.h1>
           <motion.p 
-            className="text-xl text-blue-800 max-w-2xl mx-auto"
+            className="text-xl text-emerald-800/80 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -76,11 +83,13 @@ const AboutPage = () => {
           variants={containerVariants}
         >
           <motion.div variants={itemVariants}>
-            <Card className="h-full bg-white border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+            <Card className="h-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6 flex flex-col items-center text-center">
-                <Users className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold text-blue-900 mb-3">Real-Time Collaboration</h3>
-                <p className="text-blue-700">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
+                  <Users className="w-8 h-8 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-emerald-900 mb-3">Real-Time Collaboration</h3>
+                <p className="text-emerald-700">
                   Seamless multi-user editing with instant synchronization across team members.
                 </p>
               </CardContent>
@@ -88,11 +97,13 @@ const AboutPage = () => {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="h-full bg-white border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+            <Card className="h-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6 flex flex-col items-center text-center">
-                <Lock className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold text-blue-900 mb-3">Intelligent Locking</h3>
-                <p className="text-blue-700">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
+                  <Lock className="w-8 h-8 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-emerald-900 mb-3">Intelligent Locking</h3>
+                <p className="text-emerald-700">
                   Advanced document protection preventing conflicting edits and ensuring data integrity.
                 </p>
               </CardContent>
@@ -100,11 +111,13 @@ const AboutPage = () => {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="h-full bg-white border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+            <Card className="h-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6 flex flex-col items-center text-center">
-                <Shield className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold text-blue-900 mb-3">Granular Access Control</h3>
-                <p className="text-blue-700">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
+                  <Shield className="w-8 h-8 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-emerald-900 mb-3">Granular Access Control</h3>
+                <p className="text-emerald-700">
                   Flexible permission levels with read, write, and owner access management.
                 </p>
               </CardContent>
@@ -125,24 +138,30 @@ const AboutPage = () => {
             variants={itemVariants}
           >
             <div className='text-center md:text-left'>
-              <h2 className="text-3xl font-bold text-blue-900 mb-6">How Our Locking System Works</h2>
-              <div className="space-y-4 text-blue-800">
-                <div className="flex items-center">
-                  <CheckCircle className="mr-3 text-blue-600" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-800 to-teal-800 bg-clip-text text-transparent mb-6">How Our Locking System Works</h2>
+              <div className="space-y-4 text-emerald-800">
+                <div className="flex items-center p-3 bg-white/60 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mr-4">
+                    <CheckCircle className="w-5 h-5 text-emerald-600" />
+                  </div>
                   <p>Prevents simultaneous conflicting edits</p>
                 </div>
-                <div className="flex items-center">
-                  <Workflow className="mr-3 text-blue-600" />
+                <div className="flex items-center p-3 bg-white/60 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mr-4">
+                    <Workflow className="w-5 h-5 text-emerald-600" />
+                  </div>
                   <p>Real-time section-level document locking</p>
                 </div>
-                <div className="flex items-center">
-                  <CloudLightning className="mr-3 text-blue-600" />
+                <div className="flex items-center p-3 bg-white/60 backdrop-blur-sm rounded-lg shadow-sm hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mr-4">
+                    <CloudLightning className="w-5 h-5 text-emerald-600" />
+                  </div>
                   <p>Automatic conflict resolution mechanisms</p>
                 </div>
               </div>
             </div>
-            <div className="bg-blue-100/50 rounded-lg p-6 overflow-x-scroll">
-              <pre className="text-blue-800 text-sm">
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-emerald-100">
+              <pre className="text-emerald-800 text-sm">
 {`// Simplified Locking Mechanism
 function lockDocumentSection(documentId, sectionId, userId) {
   const section = getDocumentSection(documentId, sectionId);
@@ -157,87 +176,83 @@ function lockDocumentSection(documentId, sectionId, userId) {
               </pre>
             </div>
           </motion.section>
-          <motion.section 
-          className="mt-16"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          <motion.h2 
-            className="text-3xl font-bold text-blue-900 text-center mb-12"
-            variants={itemVariants}
-          >
-            How Collaboration Works
-          </motion.h2>
 
-          <motion.div 
-            className="grid md:grid-cols-3 gap-6"
+          <motion.section 
+            className="mt-16"
+            initial="hidden"
+            animate="visible"
             variants={containerVariants}
           >
-            <motion.div variants={itemVariants}>
-              <Card className="h-full bg-white border-blue-100 shadow-sm">
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <Share2 className="w-12 h-12 text-blue-600 mb-4" />
-                  <h3 className="text-xl font-semibold text-blue-900 mb-3">Document Sharing</h3>
-                  <p className="text-blue-700">
-                    Invite team members and set precise access levels for each document.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
+            <motion.h2 
+              className="text-3xl font-bold bg-gradient-to-r from-emerald-800 to-teal-800 bg-clip-text text-transparent text-center mb-12"
+              variants={itemVariants}
+            >
+              How Collaboration Works
+            </motion.h2>
 
-            <motion.div variants={itemVariants}>
-              <Card className="h-full bg-white border-blue-100 shadow-sm">
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <Edit className="w-12 h-12 text-blue-600 mb-4" />
-                  <h3 className="text-xl font-semibold text-blue-900 mb-3">Real-Time Editing</h3>
-                  <p className="text-blue-700">
-                    Multiple users can edit simultaneously with instant synchronization.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
+            <motion.div 
+              className="grid md:grid-cols-3 gap-6"
+              variants={containerVariants}
+            >
+              <motion.div variants={itemVariants}>
+                <Card className="h-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
+                      <Share2 className="w-8 h-8 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-emerald-900 mb-3">Document Sharing</h3>
+                    <p className="text-emerald-700">
+                      Invite team members and set precise access levels for each document.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-            <motion.div variants={itemVariants}>
-              <Card className="h-full bg-white border-blue-100 shadow-sm">
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                  <Clock className="w-12 h-12 text-blue-600 mb-4" />
-                  <h3 className="text-xl font-semibold text-blue-900 mb-3">Version Tracking</h3>
-                  <p className="text-blue-700">
-                    Comprehensive history of changes with ability to revert to previous versions.
-                  </p>
-                </CardContent>
-              </Card>
+              <motion.div variants={itemVariants}>
+                <Card className="h-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
+                      <Edit className="w-8 h-8 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-emerald-900 mb-3">Real-Time Editing</h3>
+                    <p className="text-emerald-700">
+                      Multiple users can edit simultaneously with instant synchronization.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <Card className="h-full bg-white/80 backdrop-blur-sm border-emerald-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
+                      <Clock className="w-8 h-8 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-emerald-900 mb-3">Version Tracking</h3>
+                    <p className="text-emerald-700">
+                      Comprehensive history of changes with ability to revert to previous versions.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        </motion.section>
+          </motion.section>
         </motion.div>
-
-        {/* Call to Action */}
-        <div className=" bg-blue-50">
-      <div className="container mx-auto px-4 py-16 max-w-6xl">
-        {/* Previous header and feature sections remain the same */}
-
-        {/* Collaboration Workflow Section */}
-        
 
         {/* Call to Action */}
         <motion.div 
-          className="text-center mt-4"
+          className="text-center mt-16"
           variants={itemVariants}
         >
           <Link to={'/signup'}>
-          <Button 
-          size={"lg"}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            Get Started
-          </Button>
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 px-8 py-6 text-lg rounded-full"
+            >
+              Get Started Now
+            </Button>
           </Link>
         </motion.div>
-      </div>
-    </div>
-
       </div>
       <Footer />
     </div>

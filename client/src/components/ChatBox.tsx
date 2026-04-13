@@ -15,7 +15,7 @@ interface ChatBoxProps {
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ 
-  recipientName = 'Chat',
+  recipientName: _recipientName = 'Chat',
   initialMessages = [],
   onSendMessage = () => {},
 }) => {

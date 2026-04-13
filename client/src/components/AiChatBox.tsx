@@ -26,7 +26,6 @@ const GeminiChatbox: React.FC<ChatboxProps> = ({
   apiKey,
   model = "gemini-1.5-pro",
   placeholder = "Type your message here...",
-  title = "Gemini AI Assistant",
   maxTokens = 2048,
   temperature = 0.7
 }) => {
