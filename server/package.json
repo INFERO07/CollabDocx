@@ -17,7 +17,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "docx": "^9.5.1",
-    "dotenv": "^17.4.1",
+    "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "html-docx-js": "^0.3.1",
     "html-pdf": "^3.0.1",

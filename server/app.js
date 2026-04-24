@@ -15,6 +15,8 @@ const importRouter = require("./routers/importRouter");
 const exportRouter = require("./routers/exportRouter");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const aiRouter = require("./routers/aiRouter");
+
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on ${PORT}`);
@@ -42,6 +44,7 @@ app.use('/document', docRouter);
 app.use("/api/import", importRouter);
 app.use("/api/export", exportRouter);
 app.use('/user', userRouter);
+app.use("/api/ai", aiRouter);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
